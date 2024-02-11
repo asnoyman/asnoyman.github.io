@@ -339,6 +339,32 @@ config = {
            right:10px;
            border: 1px solid black;
         }
+
+        /* Header Bar*/
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        h1, li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        li a:hover {
+            background-color: #111;
+        }
     </style>
 
     <script src="https://pygame-web.github.io/archives/0.8//browserfs.min.js"></script>
@@ -346,8 +372,10 @@ config = {
 </head>
 
 <body>
-    <h1>Towers of Hanoi - Click</h1>
-    <a href="index">Home</a>
+    <ul>
+        <h1>Towers of Hanoi - Click</h1>
+        <li><a href="index">Home</a></li>
+    </ul>
 
     <div id="transfer" align=center>
         <div class="spinner" id='spinner'></div>
