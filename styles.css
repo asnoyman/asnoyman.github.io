@@ -8,6 +8,6 @@ h1 {
 }
 
 div {
-    border-color: black;
-    border-radius: 1px;
+    padding-left: 10%;
+    padding-right: 30%;
 }
