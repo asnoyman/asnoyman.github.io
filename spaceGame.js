@@ -229,7 +229,6 @@ function updateEnemyShip(deltaTime) {
         i--;
         if (gameState.enemyShip.health <= 0) {
           destroyEnemyShip();
-          spawnEnemyShip(gameState.enemyShip.health);
         }
       }
     }
@@ -246,7 +245,7 @@ function updateEnemyShip(deltaTime) {
     // Remove enemy ship if it's off the screen
     if (gameState.enemyShip.position[0] < -50 || gameState.enemyShip.position[0] > canvas.width + 50 ||
         gameState.enemyShip.position[1] < -50 || gameState.enemyShip.position[1] > canvas.height + 50) {
-      gameState.enemyShip.isAlive = false;
+          spawnEnemyShip(gameState.enemyShip.health);
     }
   } else {
     // Spawn a new enemy ship
