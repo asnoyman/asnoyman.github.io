@@ -18,7 +18,7 @@ let gameState = {
   meteors: [],
   particles: [],
   score: 0,
-  messages: []
+  messages: [],
 };
 
 // Initialize enemy ship state
@@ -421,8 +421,21 @@ function drawEnemyShip() {
     ctx.fillStyle = 'green';
     ctx.fill();
     ctx.restore();
+
+    // Calculate the position of the health bar
+    const healthBarWidth = 30;
+    const healthBarHeight = 5;
+    const healthBarX = gameState.enemyShip.position[0] - healthBarWidth / 2;
+    const healthBarY = gameState.enemyShip.position[1] - 20;
+
+    // Draw the health bar
+    ctx.fillStyle = 'red';
+    ctx.fillRect(healthBarX, healthBarY, healthBarWidth * (gameState.enemyShip.health / 10), healthBarHeight);
+    ctx.strokeStyle = 'white';
+    ctx.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
   }
 }
+
 // Function to draw messages
 function drawMessages() {
   for (const message of gameState.messages) {
