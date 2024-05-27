@@ -229,6 +229,7 @@ function updateEnemyShip(deltaTime) {
         i--;
         if (gameState.enemyShip.health <= 0) {
           destroyEnemyShip();
+          spawnEnemyShip(gameState.enemyShip.health);
         }
       }
     }
@@ -274,7 +275,7 @@ function destroyEnemyShip() {
 }
 
 // Function to spawn enemy ship
-function spawnEnemyShip() {
+function spawnEnemyShip(health = 10) {
   const side = Math.floor(Math.random() * 4); // Choose a random side to spawn on
   let x, y;
   switch (side) {
@@ -300,7 +301,7 @@ function spawnEnemyShip() {
   gameState.enemyShip.position = [x, y];
   gameState.enemyShip.angle = angle;
   gameState.enemyShip.speed = speed;
-  gameState.enemyShip.health = 10;
+  gameState.enemyShip.health = health;
   gameState.enemyShip.isAlive = true;
 }
 
