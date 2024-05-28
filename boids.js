@@ -30,13 +30,13 @@ function setup() {
   desiredseparationSlider = createSliderWithLabel('Desired Separation', 10, 50, desiredseparation, 10, 280);
   neighbordistSlider = createSliderWithLabel('Neighbor Distance', 20, 100, neighbordist, 10, 330);
 
-  let removeBoidsButton = createButton('Remove Some Boids').style('color', '#0A5AFE').style("font-weight", "bold").position(160, 30);
+  let removeBoidsButton = createButton('Remove Some Boids').style('color', '#0A5AFE').style("font-weight", "bold").position(160, 160);
   removeBoidsButton.mousePressed(removeBoids);
   removeBoidsButton.mouseOver(() => onButton = true);
   removeBoidsButton.mouseOut(() => onButton = false);
-  boidCountElement = createP('Boid Count: ' + boidCount).style('color', '#0A5AFE').style("font-weight", "bold").position(160, 0);
+  boidCountElement = createP('Boid Count: ' + boidCount).style('color', '#0A5AFE').style("font-weight", "bold").position(160, 130);
 
-  let showCloudsCheckbox = createCheckbox('Show Clouds', false).style('color', '#0A5AFE').style("font-weight", "bold").position(160, 60);
+  let showCloudsCheckbox = createCheckbox('Show Clouds', false).style('color', '#0A5AFE').style("font-weight", "bold").position(160, 190);
   showCloudsCheckbox.changed(() => showClouds = showCloudsCheckbox.checked());
   showCloudsCheckbox.mouseOver(() => onButton = true);
   showCloudsCheckbox.mouseOut(() => onButton = false);
