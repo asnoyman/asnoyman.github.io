@@ -63,3 +63,9 @@ a:hover {
 strong {
     font-weight: bold;
 }
+
+#boids {
+    width: 800px;
+    height: 600px;
+    border: 1px solid black;
+}
