@@ -24,11 +24,11 @@ function setup() {
   }
 
   // Create sliders
-  rSlider = createSliderWithLabel('Boid Size', 3, 20, r, 10, 30);
-  maxforceSlider = createSliderWithLabel('Max Force', 0.1, 0.5, maxforce, 10, 80, 0.1);
-  maxspeedSlider = createSliderWithLabel('Max Speed', 2, 10, maxspeed, 10, 130);
-  desiredseparationSlider = createSliderWithLabel('Desired Separation', 10, 50, desiredseparation, 10, 180);
-  neighbordistSlider = createSliderWithLabel('Neighbor Distance', 20, 100, neighbordist, 10, 230);
+  rSlider = createSliderWithLabel('Boid Size', 3, 20, r, 10, 130);
+  maxforceSlider = createSliderWithLabel('Max Force', 0.1, 0.5, maxforce, 10, 180, 0.1);
+  maxspeedSlider = createSliderWithLabel('Max Speed', 2, 10, maxspeed, 10, 230);
+  desiredseparationSlider = createSliderWithLabel('Desired Separation', 10, 50, desiredseparation, 10, 280);
+  neighbordistSlider = createSliderWithLabel('Neighbor Distance', 20, 100, neighbordist, 10, 330);
 
   let removeBoidsButton = createButton('Remove Some Boids').style('color', '#0A5AFE').style("font-weight", "bold").position(160, 30);
   removeBoidsButton.mousePressed(removeBoids);
