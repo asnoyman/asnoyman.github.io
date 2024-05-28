@@ -66,7 +66,7 @@ function draw() {
   for (let i = clouds.length - 1; i >= 0; i--) {
     clouds[i].update();
     if (showClouds) clouds[i].display();
-    if (clouds[i].x > width) clouds.splice(i, 1);
+    if (clouds[i].x > width + 100) clouds.splice(i, 1);
   }
   if (random(1) < 0.001 && clouds.length < 5) {
     clouds.push(new Cloud());
