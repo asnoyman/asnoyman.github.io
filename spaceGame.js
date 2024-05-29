@@ -1,14 +1,9 @@
-// Get the canvas element and its context
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-
-// Initialize game state
 let gameState = {
   initialVelocity: 100,
   accelerationRate: 3,
-  rotationSpeed: 0.05,
+  rotationSpeed: 0.065,
   angle: 0,
-  currentPosition: [canvas.width / 2, canvas.height / 2],
+  currentPosition: [0, 0],
   currentVelocity: 100,
   lastFrameTime: 0,
   isGameRunning: false,
@@ -21,9 +16,8 @@ let gameState = {
   messages: [],
 };
 
-// Initialize enemy ship state
 gameState.enemyShip = {
-  position: [canvas.width + 50, Math.random() * canvas.height],
+  position: [0, 0],
   speed: 100,
   size: 20,
   angle: 0,
@@ -32,12 +26,18 @@ gameState.enemyShip = {
   isAlive: false,
 };
 
-// Game Logic Functions
+function setup() {
+  const canvas = createCanvas(800, 600);
+  canvas.parent('canvas-holder');
+  gameState.currentPosition = [width / 2, height / 2];
+  gameState.enemyShip.position = [width + 50, random(height)];
+  frameRate(60);
+  updateButtons("reset");
+}
 
-// Function to update game state
-function update(time) {
-  const deltaTime = (time - gameState.lastFrameTime) / 1000;
-  gameState.lastFrameTime = time;
+function draw() {
+  const deltaTime = (millis() - gameState.lastFrameTime) / 1000;
+  gameState.lastFrameTime = millis();
 
   if (gameState.isGameRunning) {
     gameState.score += deltaTime;
@@ -50,14 +50,21 @@ function update(time) {
   updateMessages(deltaTime);
   updateEnemyShip(deltaTime);
 
-  drawEverything();
+  background(0, 0, 50);
+  noStroke();
+  drawShip();
+  drawLaserBlasts();
+  drawMeteors();
+  drawParticles();
+  drawMessages();
+  drawScore();
+  drawEnemyShip();
 
-  if (gameState.isGameRunning) {
-    requestAnimationFrame(update);
+  if (!gameState.isGameRunning) {
+    noLoop();
   }
 }
 
-// Function to update ship position and velocity
 function updateShip(deltaTime) {
   if (gameState.isGameRunning) {
     gameState.currentVelocity += gameState.accelerationRate * deltaTime;
@@ -66,10 +73,9 @@ function updateShip(deltaTime) {
       gameState.currentVelocity = 1000;
     }
 
-    gameState.currentPosition[0] += Math.cos(gameState.angle) * gameState.currentVelocity * deltaTime;
-    gameState.currentPosition[1] += Math.sin(gameState.angle) * gameState.currentVelocity * deltaTime;
+    gameState.currentPosition[0] += cos(gameState.angle) * gameState.currentVelocity * deltaTime;
+    gameState.currentPosition[1] += sin(gameState.angle) * gameState.currentVelocity * deltaTime;
 
-    // Update angle based on arrow key states
     if (gameState.isLeftArrowDown) {
       gameState.angle -= gameState.rotationSpeed;
     }
@@ -78,36 +84,34 @@ function updateShip(deltaTime) {
       gameState.angle += gameState.rotationSpeed;
     }
 
-    // Check for collision with canvas bounds
     if (gameState.currentPosition[0] < 0) {
-      gameState.currentPosition[0] = canvas.width; // Wrap around to the right edge
-    } else if (gameState.currentPosition[0] > canvas.width) {
-      gameState.currentPosition[0] = 0; // Wrap around to the left edge
+      gameState.currentPosition[0] = width;
+    } else if (gameState.currentPosition[0] > width) {
+      gameState.currentPosition[0] = 0;
     }
 
     if (gameState.currentPosition[1] < 0) {
-      gameState.currentPosition[1] = canvas.height; // Wrap around to the bottom edge
-    } else if (gameState.currentPosition[1] > canvas.height) {
-      gameState.currentPosition[1] = 0; // Wrap around to the top edge
+      gameState.currentPosition[1] = height;
+    } else if (gameState.currentPosition[1] > height) {
+      gameState.currentPosition[1] = 0;
     }
   }
 }
 
-// Function to update laser blasts
 function updateLaserBlasts(deltaTime) {
   for (let i = 0; i < gameState.laserBlasts.length; i++) {
     const laserBlast = gameState.laserBlasts[i];
-    laserBlast.position[0] += Math.cos(laserBlast.angle) * (gameState.currentVelocity + 200) * deltaTime;
-    laserBlast.position[1] += Math.sin(laserBlast.angle) * (gameState.currentVelocity + 200) * deltaTime;
+    laserBlast.position[0] += cos(laserBlast.angle) * (gameState.currentVelocity + 200) * deltaTime;
+    laserBlast.position[1] += sin(laserBlast.angle) * (gameState.currentVelocity + 200) * deltaTime;
 
-    // Check for collision with meteors
     for (let j = 0; j < gameState.meteors.length; j++) {
       const meteor = gameState.meteors[j];
-      const distanceToMeteor = Math.sqrt(
-        Math.pow(laserBlast.position[0] - meteor.position[0], 2) +
-        Math.pow(laserBlast.position[1] - meteor.position[1], 2)
-      );
-      if (distanceToMeteor < meteor.size) {
+
+      // Check for collision with meteor
+      if (collideCircleCircle(
+          laserBlast.position[0], laserBlast.position[1], 5, 
+          meteor.position[0], meteor.position[1], meteor.size
+        )) {
         meteor.health -= 1;
         if (meteor.health <= 0) {
           destroyMeteor(meteor);
@@ -118,70 +122,62 @@ function updateLaserBlasts(deltaTime) {
       }
     }
 
-    // Remove laser blast if it's off the screen
-    if (laserBlast.position[0] < 0 || laserBlast.position[0] > canvas.width ||
-        laserBlast.position[1] < 0 || laserBlast.position[1] > canvas.height) {
+    if (laserBlast.position[0] < 0 || laserBlast.position[0] > width ||
+        laserBlast.position[1] < 0 || laserBlast.position[1] > height) {
       gameState.laserBlasts.splice(i, 1);
       i--;
     }
   }
 }
 
-// Function to update meteors
 function updateMeteors(deltaTime) {
   for (let i = 0; i < gameState.meteors.length; i++) {
     const meteor = gameState.meteors[i];
-    meteor.position[0] += Math.cos(meteor.angle) * meteor.speed * deltaTime;
-    meteor.position[1] += Math.sin(meteor.angle) * meteor.speed * deltaTime;
+    meteor.position[0] += cos(meteor.angle) * meteor.speed * deltaTime;
+    meteor.position[1] += sin(meteor.angle) * meteor.speed * deltaTime;
 
-    // Check for collision with ship
-    const distanceToShip = Math.sqrt(
-      Math.pow(gameState.currentPosition[0] - meteor.position[0], 2) +
-      Math.pow(gameState.currentPosition[1] - meteor.position[1], 2)
-    );
-    if (distanceToShip < meteor.size + 5) {
+    const shipHitbox = getRotatedShipHitbox(gameState.currentPosition, gameState.angle);
+    if (collideCirclePoly(meteor.position[0], meteor.position[1], meteor.size, shipHitbox)) {
       endGame();
     }
 
-    // Remove meteor if it's off the screen
-    if (meteor.position[0] < 0 || meteor.position[0] > canvas.width ||
-        meteor.position[1] < 0 || meteor.position[1] > canvas.height) {
+    if (meteor.position[0] < 0 || meteor.position[0] > width ||
+        meteor.position[1] < 0 || meteor.position[1] > height) {
       gameState.meteors.splice(i, 1);
       i--;
     }
   }
 
-  // Spawn new meteors
-  if (Math.random() < 0.0075) { // 5% chance of spawning a new meteor each frame
+  if (random(1) < 0.0075) {
     spawnMeteor();
   }
 }
 
 function spawnMeteor() {
-  const side = Math.floor(Math.random() * 4); // Choose a random side to spawn on
+  const side = floor(random(4));
   let x, y;
   switch (side) {
-    case 0: // Top edge
-      x = Math.random() * canvas.width;
+    case 0:
+      x = random(width);
       y = 0;
       break;
-    case 1: // Right edge
-      x = canvas.width;
-      y = Math.random() * canvas.height;
+    case 1:
+      x = width;
+      y = random(height);
       break;
-    case 2: // Bottom edge
-      x = Math.random() * canvas.width;
-      y = canvas.height;
+    case 2:
+      x = random(width);
+      y = height;
       break;
-    case 3: // Left edge
+    case 3:
       x = 0;
-      y = Math.random() * canvas.height;
+      y = random(height);
       break;
   }
-  const angle = Math.atan2(gameState.currentPosition[1] - y, gameState.currentPosition[0] - x);
-  const speed = Math.random() * gameState.currentVelocity + 10; // Ensure all speeds are greater than 0
-  const size = Math.random() * 20 + 5;
-  const health = size < 10 ? 1 : (size < 15 ? 2 : 4);
+  const angle = atan2(gameState.currentPosition[1] - y, gameState.currentPosition[0] - x);
+  const speed = random(gameState.currentVelocity) + 10;
+  const size = random(30) + 10;
+  const health = size < 20 ? 1 : (size < 30 ? 2 : 4);
   gameState.meteors.push({
     position: [x, y],
     angle: angle,
@@ -191,11 +187,10 @@ function spawnMeteor() {
   });
 }
 
-// Function to destroy a meteor
 function destroyMeteor(meteor) {
   for (let i = 0; i < 10; i++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const speed = Math.random() * 50 + 50;
+    const angle = random(TWO_PI);
+    const speed = random(50) + 50;
     gameState.particles.push({
       position: [meteor.position[0], meteor.position[1]],
       angle: angle,
@@ -204,24 +199,22 @@ function destroyMeteor(meteor) {
       lifetime: 1
     });
   }
-  const bonus = Math.floor(50 / meteor.size);
+  const bonus = floor(100 / meteor.size);
   gameState.score += bonus;
   addMessage(meteor.position, `+${bonus}`);
   gameState.meteors.splice(gameState.meteors.indexOf(meteor), 1);
 }
 
-// Function to update enemy ship
 function updateEnemyShip(deltaTime) {
   if (gameState.enemyShip.isAlive) {
-    gameState.enemyShip.position[0] += Math.cos(gameState.enemyShip.angle) * gameState.enemyShip.speed * deltaTime;
-    gameState.enemyShip.position[1] += Math.sin(gameState.enemyShip.angle) * gameState.enemyShip.speed * deltaTime;
+    gameState.enemyShip.position[0] += cos(gameState.enemyShip.angle) * gameState.enemyShip.speed * deltaTime;
+    gameState.enemyShip.position[1] += sin(gameState.enemyShip.angle) * gameState.enemyShip.speed * deltaTime;
 
-    // Check for collision with laser blasts
     for (let i = 0; i < gameState.laserBlasts.length; i++) {
       const laserBlast = gameState.laserBlasts[i];
-      const distanceToLaserBlast = Math.sqrt(
-        Math.pow(gameState.enemyShip.position[0] - laserBlast.position[0], 2) +
-        Math.pow(gameState.enemyShip.position[1] - laserBlast.position[1], 2)
+      const distanceToLaserBlast = dist(
+        gameState.enemyShip.position[0], gameState.enemyShip.position[1],
+        laserBlast.position[0], laserBlast.position[1]
       );
       if (distanceToLaserBlast < gameState.enemyShip.size) {
         gameState.enemyShip.health -= 1;
@@ -233,33 +226,27 @@ function updateEnemyShip(deltaTime) {
       }
     }
 
-    // Check for collision with player ship
-    const distanceToPlayerShip = Math.sqrt(
-      Math.pow(gameState.enemyShip.position[0] - gameState.currentPosition[0], 2) +
-      Math.pow(gameState.enemyShip.position[1] - gameState.currentPosition[1], 2)
-    );
-    if (distanceToPlayerShip < gameState.enemyShip.size + 5) {
+    const shipHitbox = getRotatedShipHitbox(gameState.currentPosition, gameState.angle);
+    const enemyShipHitbox = getRotatedShipHitbox(gameState.enemyShip.position, gameState.enemyShip.angle);
+    if (collidePolyPoly(shipHitbox, enemyShipHitbox)) {
       endGame();
     }
 
-    // Remove enemy ship if it's off the screen
-    if (gameState.enemyShip.position[0] < -50 || gameState.enemyShip.position[0] > canvas.width + 50 ||
-        gameState.enemyShip.position[1] < -50 || gameState.enemyShip.position[1] > canvas.height + 50) {
-          spawnEnemyShip(gameState.enemyShip.health);
+    if (gameState.enemyShip.position[0] < -50 || gameState.enemyShip.position[0] > width + 50 ||
+        gameState.enemyShip.position[1] < -50 || gameState.enemyShip.position[1] > height + 50) {
+      spawnEnemyShip(gameState.enemyShip.health);
     }
   } else {
-    // Spawn a new enemy ship
-    if (Math.random() < 0.01) { // 1% chance of spawning a new enemy ship each frame
+    if (random(1) < 0.01) {
       spawnEnemyShip();
     }
   }
 }
 
-// Function to destroy enemy ship
 function destroyEnemyShip() {
   for (let i = 0; i < 10; i++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const speed = Math.random() * 50 + 50;
+    const angle = random(TWO_PI);
+    const speed = random(50) + 50;
     gameState.particles.push({
       position: [gameState.enemyShip.position[0], gameState.enemyShip.position[1]],
       angle: angle,
@@ -273,30 +260,29 @@ function destroyEnemyShip() {
   gameState.enemyShip.isAlive = false;
 }
 
-// Function to spawn enemy ship
 function spawnEnemyShip(health = 10) {
-  const side = Math.floor(Math.random() * 4); // Choose a random side to spawn on
+  const side = floor(random(4));
   let x, y;
   switch (side) {
-    case 0: // Top edge
-      x = Math.random() * canvas.width;
+    case 0:
+      x = random(width);
       y = 0;
       break;
-    case 1: // Right edge
-      x = canvas.width;
-      y = Math.random() * canvas.height;
+    case 1:
+      x = width;
+      y = random(height);
       break;
-    case 2: // Bottom edge
-      x = Math.random() * canvas.width;
-      y = canvas.height;
+    case 2:
+      x = random(width);
+      y = height;
       break;
-    case 3: // Left edge
+    case 3:
       x = 0;
-      y = Math.random() * canvas.height;
+      y = random(height);
       break;
   }
-  const angle = Math.atan2(gameState.currentPosition[1] - y, gameState.currentPosition[0] - x);
-  const speed = Math.random() * 100 + 50; // Random speed between 50 and 150
+  const angle = atan2(gameState.currentPosition[1] - y, gameState.currentPosition[0] - x);
+  const speed = random(100) + 50;
   gameState.enemyShip.position = [x, y];
   gameState.enemyShip.angle = angle;
   gameState.enemyShip.speed = speed;
@@ -304,12 +290,11 @@ function spawnEnemyShip(health = 10) {
   gameState.enemyShip.isAlive = true;
 }
 
-// Function to update particles
 function updateParticles(deltaTime) {
   for (let i = 0; i < gameState.particles.length; i++) {
     const particle = gameState.particles[i];
-    particle.position[0] += Math.cos(particle.angle) * particle.speed * deltaTime;
-    particle.position[1] += Math.sin(particle.angle) * particle.speed * deltaTime;
+    particle.position[0] += cos(particle.angle) * particle.speed * deltaTime;
+    particle.position[1] += sin(particle.angle) * particle.speed * deltaTime;
     particle.lifetime -= deltaTime;
     if (particle.lifetime <= 0) {
       gameState.particles.splice(i, 1);
@@ -318,7 +303,6 @@ function updateParticles(deltaTime) {
   }
 }
 
-// Function to update messages
 function updateMessages(deltaTime) {
   for (let i = 0; i < gameState.messages.length; i++) {
     const message = gameState.messages[i];
@@ -330,7 +314,6 @@ function updateMessages(deltaTime) {
   }
 }
 
-// Function to add a message
 function addMessage(position, text) {
   gameState.messages.push({
     position: position,
@@ -339,223 +322,186 @@ function addMessage(position, text) {
   });
 }
 
-// Drawing Functions
+function getRotatedShipHitbox(position, angle) {
+  const hitboxPoints = [
+    createVector(-10, -15),
+    createVector(10, 0),
+    createVector(-10, 15),
+  ];
 
-// Function to draw everything
-function drawEverything() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBackground();
-  drawShip();
-  drawLaserBlasts();
-  drawMeteors();
-  drawParticles();
-  drawMessages();
-  drawScore();
-  drawEnemyShip();
+  // Rotate the hitbox points around the ship's center
+  for (let i = 0; i < hitboxPoints.length; i++) {
+    hitboxPoints[i].rotate(angle);
+    hitboxPoints[i].add(position[0], position[1]);
+  }
+
+  return hitboxPoints;
 }
 
-// Function to draw background
-function drawBackground() {
-  ctx.fillStyle = 'rgb(0, 0, 50)'; // Set the background color to a deep blue/black
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-// Function to draw ship
 function drawShip() {
-  ctx.save();
-  ctx.translate(gameState.currentPosition[0], gameState.currentPosition[1]);
-  ctx.rotate(gameState.angle);
-  ctx.beginPath();
-  ctx.moveTo(-10, -15);
-  ctx.lineTo(10, 0);
-  ctx.lineTo(-10, 15);
-  ctx.fillStyle = 'red';
-  ctx.fill();
-  ctx.restore();
+  push();
+  translate(gameState.currentPosition[0], gameState.currentPosition[1]);
+  rotate(gameState.angle);
+  fill('red');
+  beginShape();
+  vertex(-10, -15);
+  vertex(10, 0);
+  vertex(-10, 15);
+  endShape(CLOSE);
+  pop();
 }
 
-// Function to draw laser blasts
 function drawLaserBlasts() {
   for (const laserBlast of gameState.laserBlasts) {
-    ctx.save();
-    ctx.translate(laserBlast.position[0], laserBlast.position[1]);
-    ctx.rotate(laserBlast.angle);
-    ctx.beginPath();
-    ctx.rect(0, -1, 10, 2); // Draw a vertical rectangle
-    ctx.fillStyle = 'white';
-    ctx.fill();
-    ctx.restore();
+    push();
+    translate(laserBlast.position[0], laserBlast.position[1]);
+    rotate(laserBlast.angle);
+    fill('white');
+    rect(0, -1, 10, 2);
+    pop();
   }
 }
 
-// Function to draw meteors
 function drawMeteors() {
   for (const meteor of gameState.meteors) {
-    ctx.beginPath();
-    ctx.arc(meteor.position[0], meteor.position[1], meteor.size, 0, 2 * Math.PI);
-    ctx.fillStyle = 'grey';
-    ctx.fill();
+    fill('grey');
+    ellipse(meteor.position[0], meteor.position[1], meteor.size);
   }
 }
 
-// Function to draw particles
 function drawParticles() {
   for (const particle of gameState.particles) {
-    ctx.beginPath();
-    ctx.arc(particle.position[0], particle.position[1], particle.size, 0, 2 * Math.PI);
-    ctx.fillStyle = 'white';
-    ctx.fill();
+    fill('white');
+    ellipse(particle.position[0], particle.position[1], particle.size);
   }
 }
 
-// Function to draw enemy ship
 function drawEnemyShip() {
   if (gameState.enemyShip.isAlive) {
-    ctx.save();
-    ctx.translate(gameState.enemyShip.position[0], gameState.enemyShip.position[1]);
-    ctx.rotate(gameState.enemyShip.angle);
-    ctx.beginPath();
-    ctx.moveTo(-10, -15);
-    ctx.lineTo(10, 0);
-    ctx.lineTo(-10, 15);
-    ctx.fillStyle = 'green';
-    ctx.fill();
-    ctx.restore();
+    push();
+    translate(gameState.enemyShip.position[0], gameState.enemyShip.position[1]);
+    rotate(gameState.enemyShip.angle);
+    fill('green');
+    beginShape();
+    vertex(-10, -15);
+    vertex(10, 0);
+    vertex(-10, 15);
+    endShape(CLOSE);
+    pop();
 
-    // Calculate the position of the health bar
     const healthBarWidth = 30;
     const healthBarHeight = 5;
     const healthBarX = gameState.enemyShip.position[0] - healthBarWidth / 2;
     const healthBarY = gameState.enemyShip.position[1] - 20;
 
-    // Draw the health bar
-    ctx.fillStyle = 'red';
-    ctx.fillRect(healthBarX, healthBarY, healthBarWidth * (gameState.enemyShip.health / 10), healthBarHeight);
-    ctx.strokeStyle = 'white';
-    ctx.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+    // Draw the red health bar
+    fill('red');
+    noStroke();
+    const healthPercentage = gameState.enemyShip.health / 10;
+    rect(healthBarX, healthBarY, healthBarWidth * healthPercentage, healthBarHeight);
+
+    // Draw the white outline
+    noFill();
+    stroke('white');
+    rect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
   }
 }
 
-// Function to draw messages
 function drawMessages() {
   for (const message of gameState.messages) {
-    ctx.font = '18px Arial';
-    ctx.fillStyle = `rgba(255, 255, 255, ${message.lifetime})`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(message.text, message.position[0], message.position[1]);
+    fill(255, 255, 255, message.lifetime * 255);
+    textAlign(CENTER, CENTER);
+    text(message.text, message.position[0], message.position[1]);
   }
 }
 
-// Function to draw score
 function drawScore() {
-  ctx.font = '24px Arial';
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(`Score: ${Math.floor(gameState.score)}`, 10, 10);
-  ctx.fillText(`High Score: ${Math.floor(localStorage.highScore)}`, 10, 40);
+  fill('white');
+  textAlign(LEFT, TOP);
+  textSize(24);
+  text(`Score: ${floor(gameState.score)}`, 10, 10);
+  text(`High Score: ${floor(localStorage.highScore)}`, 10, 40);
 }
 
-// Game Control Functions
-
-// Function to start the game
 function startGame() {
-  gameState.lastFrameTime = performance.now();
+  gameState.lastFrameTime = millis();
   gameState.isGameRunning = true;
-
-  // Disable the start button and enable the stop and reset buttons
-  document.getElementById('startButton').disabled = true;
-  document.getElementById('stopButton').disabled = false;
-  document.getElementById('resetButton').disabled = false;
-
-  // Start the game loop
-  requestAnimationFrame(update);
+  loop();
+  updateButtons("start");
 }
 
-// Function to stop the game
 function stopGame() {
   gameState.isGameRunning = false;
-
-  // Enable both the start and reset buttons
-  document.getElementById('startButton').disabled = false;
-  document.getElementById('resetButton').disabled = false;
-  document.getElementById('stopButton').disabled = true;
+  updateButtons("stop");
 }
 
-// Function to reset the game
 function resetGame() {
   stopGame();
   gameState.currentVelocity = gameState.initialVelocity;
   gameState.angle = 0;
-  gameState.currentPosition = [canvas.width / 2, canvas.height / 2];
+  gameState.currentPosition = [width / 2, height / 2];
   gameState.laserBlasts = [];
   gameState.meteors = [];
   gameState.particles = [];
   gameState.score = 0;
   gameState.messages = [];
   gameState.enemyShip.isAlive = false;
-
-
-  // Play one frame to load the reset game
-  requestAnimationFrame(update);
-
-  // Disable the reset button and enable the start button
-  document.getElementById('resetButton').disabled = true;
-  document.getElementById('startButton').disabled = false;
-  document.getElementById('stopButton').disabled = true;
+  loop();
+  noLoop();
+  updateButtons("reset");
 }
 
-// Function to end the game
 function endGame() {
   gameState.isGameRunning = false;
 
   if (gameState.score > localStorage.highScore) {
     localStorage.highScore = gameState.score;
   }
-
-  // Disable the start button and enable the reset button
-  document.getElementById('startButton').disabled = true;
-  document.getElementById('resetButton').disabled = false;
-  document.getElementById('stopButton').disabled = true;
 }
 
-// Function to handle key presses
-function handleKeyDown(event) {
-  if (event.key === 'ArrowLeft') {
+function keyPressed() {
+if (gameState.isGameRunning) {
+  if (keyCode === LEFT_ARROW) {
     gameState.isLeftArrowDown = true;
-  } else if (event.key === 'ArrowRight') {
+  } else if (keyCode === RIGHT_ARROW) {
     gameState.isRightArrowDown = true;
-  } else if (event.key === ' ') {
-    // Fire laser blast
+  } else if (key === ' ') {
     gameState.laserBlasts.push({
       position: [gameState.currentPosition[0], gameState.currentPosition[1]],
       angle: gameState.angle
     });
   }
 }
+}
 
-// Function to handle key up events
-function handleKeyUp(event) {
-  if (event.key === 'ArrowLeft') {
+function keyReleased() {
+  if (keyCode === LEFT_ARROW) {
     gameState.isLeftArrowDown = false;
-  } else if (event.key === 'ArrowRight') {
+  } else if (keyCode === RIGHT_ARROW) {
     gameState.isRightArrowDown = false;
+  }
+}
+
+function updateButtons(state) {
+  const startButton = document.querySelector('button[onclick="startGame()"]');
+  const stopButton = document.querySelector('button[onclick="stopGame()"]');
+  const resetButton = document.querySelector('button[onclick="resetGame()"]');
+
+  if (state === "start") {
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    resetButton.disabled = false;
+  } else if (state === "stop") {
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = false;
+  } else if (state === "reset") {
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = true;
   }
 }
 
 if (localStorage.highScore === undefined) {
   localStorage.highScore = 0;
 }
-
-// Add event listeners to the document
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
-
-// Add event listeners to the buttons and document
-document.getElementById('startButton').addEventListener('click', startGame);
-document.getElementById('stopButton').addEventListener('click', stopGame);
-document.getElementById('resetButton').addEventListener('click', resetGame);
-
-// Draw the initial game state
-drawEverything();

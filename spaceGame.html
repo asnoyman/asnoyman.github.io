@@ -1,25 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Space Exploration Game</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untitled Space Game</title>
+  <script src="../p5.min.js"></script>
+  <script src="gameP5.js"></script>
+  <script defer src="https://unpkg.com/p5.collide2d"></script>
   <link rel="stylesheet" href="styles.css"/>
+  <style>
+    #button-container {
+        margin-top: 20px;
+    }
+
+    #button-container button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 0 10px;
+    }
+
+    #button-container button:hover {
+        background-color: #444;
+    }
+
+    #button-container button:disabled {
+        background-color: #666;
+        cursor: default;
+    }
+  </style>
 </head>
+
 <body>
   <header>
-    <h1>Untitled Space Game</h1>
+    <h1>Boids Simulator</h1>
   </header>
 
   <br>
-  
-  <!-- Create a canvas element to draw our game on -->
-  <canvas id="canvas" width="800" height="600"></canvas>
-  
-  <!-- Create buttons to start, stop and reset the game -->
-  <button id="startButton">Start Game</button>
-  <button id="stopButton" disabled>Stop Game</button>
-  <button id="resetButton" disabled>Reset Game</button>
 
-  <script src="spaceGame.js"></script>
+  <div id="canvas-container">
+    <div id="canvas-holder"></div>
+  </div>
+  <div id="button-container">
+    <button onclick="startGame()">Start</button>
+    <button onclick="stopGame()">Stop</button>
+    <button onclick="resetGame()">Reset</button>
+  </div>
 </body>
-</html>
+
+</html> 
