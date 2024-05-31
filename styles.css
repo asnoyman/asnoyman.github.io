@@ -32,7 +32,7 @@ section {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #2980b9;
+    background-color: #3498db;
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -41,7 +41,8 @@ section {
 }
 
 .home-button:hover {
-    background-color: #3498db;
+    background-color: #2980b9;
+    color: #fff;
 }
 
 h1 {

@@ -19,7 +19,7 @@ function setup() {
     boids.push(new Boid());
   }
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     clouds.push(new Cloud());
   }
 
@@ -68,7 +68,7 @@ function draw() {
     if (showClouds) clouds[i].display();
     if (clouds[i].x > width + 100) clouds.splice(i, 1);
   }
-  if (random(1) < 0.001 && clouds.length < 5) {
+  if (random(1) < 0.005 && clouds.length < 5) {
     clouds.push(new Cloud());
   }
 
@@ -85,7 +85,9 @@ function draw() {
 }
 
 function mousePressed() {
-  mouseDown = true;
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+    mouseDown = true;
+  }
 }
 
 function mouseReleased() {

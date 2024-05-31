@@ -423,6 +423,14 @@ function drawScore() {
   text(`High Score: ${floor(localStorage.highScore)}`, 10, 40);
 }
 
+function startStopGame() {
+  if (gameState.isGameRunning) {
+    stopGame();
+  } else {
+    startGame();
+  }
+}
+
 function startGame() {
   gameState.lastFrameTime = millis();
   gameState.isGameRunning = true;
@@ -457,6 +465,8 @@ function endGame() {
   if (gameState.score > localStorage.highScore) {
     localStorage.highScore = gameState.score;
   }
+
+  updateButtons("end");
 }
 
 function keyPressed() {
@@ -483,24 +493,26 @@ function keyReleased() {
 }
 
 function updateButtons(state) {
-  const startButton = document.querySelector('button[onclick="startGame()"]');
-  const stopButton = document.querySelector('button[onclick="stopGame()"]');
+  const startStopButton = document.querySelector('button[onclick="startStopGame()"]');
   const resetButton = document.querySelector('button[onclick="resetGame()"]');
 
   if (state === "start") {
-    startButton.disabled = true;
-    stopButton.disabled = false;
+    startStopButton.textContent = "Pause";
     resetButton.disabled = false;
   } else if (state === "stop") {
-    startButton.disabled = false;
-    stopButton.disabled = true;
+    startStopButton.textContent = "Play";
     resetButton.disabled = false;
   } else if (state === "reset") {
-    startButton.disabled = false;
-    stopButton.disabled = true;
+    startStopButton.textContent = "Start";
+    startStopButton.disabled = false;
     resetButton.disabled = true;
+  } else if (state == "end") {
+    startStopButton.textContent = "Start";
+    startStopButton.disabled = true;
+    resetButton.disabled = false;
   }
 }
+
 
 if (localStorage.highScore === undefined) {
   localStorage.highScore = 0;
