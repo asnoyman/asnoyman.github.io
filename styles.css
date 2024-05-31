@@ -29,13 +29,15 @@ section {
 }
 
 .home-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     background-color: #2980b9;
     color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    float: right;
 }
 
 .home-button:hover {
