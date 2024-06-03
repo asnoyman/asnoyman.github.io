@@ -7,7 +7,8 @@
   <title>Wave Function Collapse</title>
   <script src="javascript/p5.min.js"></script>
   <script src="javascript/waveFunctionCollapse.js"></script>
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles/index.css"/>
+  <link rel="stylesheet" href="styles/wfc.css"/>
 </head>
 
 <body>
@@ -18,28 +19,35 @@
 
   <br>
 
-  <label for="tileSizeSlider">Tile Size:</label>
-    <input type="range" id="tileSizeSlider" min="0" max="7" value="2">
-    <br>
-    <label for="intervalSlider">Interval (ms):</label>
-    <input type="range" id="intervalSlider" min="0" max="500" value="100">
-    <br><br>
-    <button id="startPauseButton">Start Simulation</button>
-    <button id="resetButton" disabled>Reset Simulation</button>
-    <br><br>
-    <input type="radio" id="simpleRailsRadio" name="tileSet" value="simpleRails" checked>
-    <label for="simpleRailsRadio">Simple Rails</label>
-    <input type="radio" id="complexRailsRadio" name="tileSet" value="complexRails">
-    <label for="complexRailsRadio">Complex Rails</label>
-    <input type="radio" id="circuitBoardRadio" name="tileSet" value="circuitBoard">
-    <label for="circuitBoardRadio">Circuit Board</label>
-
-    <main>
-      <div class="canvas-container">
-        <div id="tile-preview"></div>
-        <div id="canvas"></div>
+  <main>
+    <div class="controls">
+      <div class="sliders">
+        <label for="tileSizeSlider">Tile Size:</label>
+        <input type="range" id="tileSizeSlider" min="0" max="7" value="2">
+        <br>
+        <label for="intervalSlider">Interval (ms):</label>
+        <input type="range" id="intervalSlider" min="0" max="500" value="100">
       </div>
-    </main>
+      <div class="radios">
+        <input type="radio" id="simpleRailsRadio" name="tileSet" value="simpleRails" checked>
+        <label for="simpleRailsRadio">Simple Rails</label>
+        <br>
+        <input type="radio" id="complexRailsRadio" name="tileSet" value="complexRails">
+        <label for="complexRailsRadio">Complex Rails</label>
+        <br>
+        <input type="radio" id="circuitBoardRadio" name="tileSet" value="circuitBoard">
+        <label for="circuitBoardRadio">Circuit Board</label>
+      </div>
+      <div class="buttons">
+        <button id="startPauseButton">Start Simulation</button>
+        <button id="resetButton" disabled>Reset Simulation</button>
+      </div>
+    </div>
+    <div class="canvas-container">
+      <div id="tile-preview"></div>
+      <div id="canvas"></div>
+    </div>
+  </main>
 </body>
 
 </html>

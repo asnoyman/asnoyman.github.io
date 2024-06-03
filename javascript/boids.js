@@ -31,7 +31,7 @@ function setup() {
   neighbordistSlider = createSliderWithLabel('Neighbor Distance', 20, 100, neighbordist, 10, 330);
 
   boidCountElement = createP('Boid Count: ' + boidCount).style('color', '#0A5AFE').style("font-weight", "bold").position(160, 100);
-  let removeBoidsButton = createButton('Remove Some Boids').style('color', '#0A5AFE').style("font-weight", "bold").position(160, 140);
+  let removeBoidsButton = createButton('Remove Some Boids').position(160, 140);
   removeBoidsButton.mousePressed(removeBoids);
   removeBoidsButton.mouseOver(() => onButton = true);
   removeBoidsButton.mouseOut(() => onButton = false);

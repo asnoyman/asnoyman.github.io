@@ -429,6 +429,7 @@ function startStopGame() {
   } else {
     startGame();
   }
+  return false;
 }
 
 function startGame() {
@@ -492,9 +493,15 @@ function keyReleased() {
   }
 }
 
+window.addEventListener('keydown', function(e) {
+  if (e.key === ' ' && e.target.tagName === 'BUTTON') {
+    e.preventDefault();
+  }
+});
+
 function updateButtons(state) {
-  const startStopButton = document.querySelector('button[onclick="startStopGame()"]');
-  const resetButton = document.querySelector('button[onclick="resetGame()"]');
+  const startStopButton = document.getElementById('start-stop-button');
+  const resetButton = document.getElementById('reset-button');
 
   if (state === "start") {
     startStopButton.textContent = "Pause";
