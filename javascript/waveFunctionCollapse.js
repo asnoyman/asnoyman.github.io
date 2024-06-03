@@ -1,6 +1,6 @@
 let CELL_SIZE_OPTIONS = [300, 150, 100, 60, 30, 15, 10, 5];
 
-let CELL_SIZE = 200;
+let CELL_SIZE;
 let grid = [];
 let simpleRailsTileTypes = [];
 let complexRailsTileTypes = [];
@@ -167,7 +167,7 @@ function preload() {
     for (let baseTile of simpleRailBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
-        if (!isDuplicateTile(newTile)) {
+        if (!isDuplicateTile(newTile, simpleRailsTileTypes)) {
           simpleRailsTileTypes.push(newTile);
         }
       }
@@ -176,7 +176,7 @@ function preload() {
     for (let baseTile of complexRailBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
-        if (!isDuplicateTile(newTile)) {
+        if (!isDuplicateTile(newTile, complexRailsTileTypes)) {
           complexRailsTileTypes.push(newTile);
         }
       }
@@ -185,7 +185,7 @@ function preload() {
     for (let baseTile of curcuitBoardBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
-        if (!isDuplicateTile(newTile)) {
+        if (!isDuplicateTile(newTile, circuitBoardTileTypes)) {
           circuitBoardTileTypes.push(newTile);
         }
       }
@@ -211,8 +211,8 @@ function rotateTile(tile) {
   tile.right = temp;
 }
 
-function isDuplicateTile(newTile) {
-  return tileTypes.some((tile) => {
+function isDuplicateTile(newTile, tiles) {
+  return tiles.some((tile) => {
     return (
       tile.up === newTile.up &&
       tile.right === newTile.right &&
@@ -243,20 +243,59 @@ function setup() {
       switch (this.value) {
         case 'simpleRails':
           tileTypes = simpleRailsTileTypes;
+          updateTilePreview();
           break;
         case 'complexRails':
           tileTypes = complexRailsTileTypes;
+          updateTilePreview();
           break;
         case 'circuitBoard':
           tileTypes = circuitBoardTileTypes;
+          updateTilePreview();
           break;
       }
       grid = createGrid();
     };
   }
 
+  updateTilePreview();
+
   updateGridSize();
 }
+
+function updateTilePreview() {
+  let tilePreviewDiv = document.getElementById('tile-preview');
+  
+  while (tilePreviewDiv.firstChild) {
+    tilePreviewDiv.removeChild(tilePreviewDiv.firstChild);
+  }
+  
+  let baseTiles;
+  switch (document.querySelector('input[name="tileSet"]:checked').value) {
+    case 'simpleRails':
+      baseTiles = simpleRailsTileTypes.filter(tile => tile.rotation === 0);
+      break;
+    case 'complexRails':
+      baseTiles = complexRailsTileTypes.filter(tile => tile.rotation === 0);
+      break;
+    case 'circuitBoard':
+      baseTiles = circuitBoardTileTypes.filter(tile => tile.rotation === 0);
+      break;
+  }
+  
+  let totalMargin = (baseTiles.length - 1) * 10;
+  let tileSize = Math.min(100, (600 - totalMargin) / baseTiles.length);
+  
+  for (let baseTile of baseTiles) {
+    let img = document.createElement('img');
+    img.src = baseTile.imgPath;
+    img.width = tileSize;
+    img.height = tileSize;
+    tilePreviewDiv.appendChild(img);
+  }
+}
+
+updateTilePreview();
 
 function draw() {
   background(0);
