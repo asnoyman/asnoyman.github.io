@@ -22,7 +22,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-grow: 1; /* added flex-grow */
+    flex-grow: 1;
 }
   
 #canvas {
@@ -38,7 +38,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    width: 300px; /* added width */
+    width: 300px; 
 }
 
 .sliders {
@@ -50,9 +50,9 @@
 }
 
 .radios label {
-    display: inline-block; /* changed from block to inline-block */
+    display: inline-block;
     margin-bottom: 10px;
-    margin-left: 10px; /* added margin-left */
+    margin-left: 10px;
   }
 
 .buttons {
@@ -113,3 +113,20 @@ input[type="range"]::-moz-range-thumb {
 main {
     flex-direction: row;
 }
+
+#highlightBaseTileCheckbox {
+    margin: 10px;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+  
+  #highlightBaseTileCheckbox:checked {
+    accent-color: #3498db;
+  }
+  
+  .highlighted {
+    box-shadow: 0 0 10px 5px #3498db;
+    border-radius: 5px;
+  }
+  

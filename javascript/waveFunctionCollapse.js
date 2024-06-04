@@ -9,7 +9,7 @@ let tileTypes = [];
 
 let tileSizeSlider;
 let intervalSlider;
-let startButton;
+let highlightBaseTileCheckbox;
 let isSimulationStarted = false;
 let isSimulationPaused = false;
 
@@ -167,24 +167,27 @@ function preload() {
     for (let baseTile of simpleRailBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
+        newTile.baseTileIndex = simpleRailBaseTiles.indexOf(baseTile);
         if (!isDuplicateTile(newTile, simpleRailsTileTypes)) {
           simpleRailsTileTypes.push(newTile);
         }
       }
     }
-  
+    
     for (let baseTile of complexRailBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
+        newTile.baseTileIndex = complexRailBaseTiles.indexOf(baseTile);
         if (!isDuplicateTile(newTile, complexRailsTileTypes)) {
           complexRailsTileTypes.push(newTile);
         }
       }
     }
-  
+    
     for (let baseTile of curcuitBoardBaseTiles) {
       for (let rotation = 0; rotation < 360; rotation += 90) {
         let newTile = createTile(baseTile, rotation);
+        newTile.baseTileIndex = curcuitBoardBaseTiles.indexOf(baseTile);
         if (!isDuplicateTile(newTile, circuitBoardTileTypes)) {
           circuitBoardTileTypes.push(newTile);
         }
@@ -231,8 +234,8 @@ function setup() {
   tileSizeSlider.oninput = updateGridSize;
   
   intervalSlider = document.getElementById('intervalSlider');
-  
-  startButton = document.getElementById('startButton');
+
+  highlightBaseTileCheckbox = document.getElementById('highlightBaseTileCheckbox');
   
   startPauseButton.onclick = startPauseSimulation;
   resetButton.onclick = resetSimulation;
@@ -294,8 +297,6 @@ function updateTilePreview() {
     tilePreviewDiv.appendChild(img);
   }
 }
-
-updateTilePreview();
 
 function draw() {
   background(0);
@@ -381,6 +382,11 @@ function resetSimulation() {
     Array.prototype.forEach.call(tileSetRadios, function(radio) {
       radio.disabled = false;
     });
+  let tilePreviewDiv = document.getElementById('tile-preview');
+  let imgElements = tilePreviewDiv.getElementsByTagName('img');
+  for (let img of imgElements) {
+    img.classList.remove('highlighted');
+  }
   updateGridSize();
 }
 
@@ -409,6 +415,16 @@ function randomizeCell() {
       let randomTile = random(availableTiles);
       grid[i][j].img = tileTypes[randomTile].img;
       grid[i][j].rotation = tileTypes[randomTile].rotation;
+
+      // Highlight the base tile in the tile preview
+      let tilePreviewDiv = document.getElementById('tile-preview');
+      let imgElements = tilePreviewDiv.getElementsByTagName('img');
+      for (let img of imgElements) {
+        img.classList.remove('highlighted');
+      }
+      if (highlightBaseTileCheckbox.checked) {
+        imgElements[tileTypes[randomTile].baseTileIndex].classList.add('highlighted');
+      }
 
       // Update available tiles for adjacent cells
       let queue = [];
