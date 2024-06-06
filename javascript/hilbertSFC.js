@@ -2,6 +2,7 @@ let order = 4;
 let speed = 100;
 let mode = 'blackAndWhite';
 let running = false; // Flag to indicate whether the simulation is running
+let skipFrames = 1; // Number of frames to skip
 
 let cellSize;
 let path = [];
@@ -18,6 +19,9 @@ let intervalSlider;
 let colourSelect;
 let startPauseButton;
 let resetButton;
+let imageUpload;
+let imagePreviewDiv;
+let imagePreview;
 
 function setup() {
   let canvas = createCanvas(512, 512);
@@ -29,6 +33,14 @@ function setup() {
   colourSelect = document.getElementById('colourSelect');
   startPauseButton = document.getElementById('startPauseButton');
   resetButton = document.getElementById('resetButton');
+  imageUpload = document.getElementById('imageUpload');
+  imagePreviewDiv = document.getElementById('imagePreview');
+
+  let skipFramesSlider = document.getElementById('skipFramesSlider');
+
+  skipFramesSlider.oninput = function () {
+    skipFrames = parseInt(skipFramesSlider.value);
+  };
 
   orderSlider.oninput = function () {
     order = parseInt(orderSlider.value);
@@ -42,24 +54,33 @@ function setup() {
 
   colourSelect.onchange = function () {
     mode = colourSelect.value;
-    if (mode == 'random') {
-      hue = random(360);
+    if (mode == 'image') {
+      imageUpload.style.display = 'block';
+      if (imagePreview) {
+        imagePreviewDiv.style.display = 'block';
+      }
+    } else {
+      imageUpload.style.display = 'none';
+      imagePreviewDiv.style.display = 'none';
     }
   };
 
-  // imageUpload.onchange = function () {
-  //   let file = imageUpload.files[0];
-  //   let url = URL.createObjectURL(file);
-  //   imagePreview = loadImage(url, function (img) {
-  //     // Resize the image to fit the canvas
-  //     img.resize(width, height);
-  //     // Display the image in grayscale as a preview
-  //     img.filter(GRAY);
-  //     image(img, 0, 0);
-  //   });
-  // };
+  imageUpload.onchange = function () {
+    let file = imageUpload.files[0];
+    let url = URL.createObjectURL(file);
+    imagePreview = loadImage(url, function (img) {
+      img.resize(256, 256);
+      img.filter(GRAY);
+      imagePreviewDiv.style.backgroundImage = 'url(' + img.canvas.toDataURL() + ')';
+      imagePreviewDiv.style.display = 'block';
+    });
+  };
 
   startPauseButton.onclick = function () {
+    if (mode == 'image' && !imagePreview) {
+      alert('Please load an image first');
+      return;
+    }
     running = !running; // Toggle the running flag
     if (running) {
       startPauseButton.textContent = 'Pause Simulation';
@@ -91,35 +112,38 @@ function draw() {
     if (currentTime - lastTime > speed) {
       lastTime = currentTime;
       if (index < path.length - 1) {
-        index++;
-        let pos1 = path[index - 1];
-        let pos2 = path[index];
+        index = Math.min(index + skipFrames, path.length - 1);
+        for (let i = Math.max(0, index - skipFrames); i < index; i++) {
+          let pos1 = path[i];
+          let pos2 = path[i + 1];
 
-        if (mode == 'blackAndWhite') {
-          stroke(255);
-        } else if (mode == 'grayScale') {
-          stroke(255 - ((index / path.length) * 360 * 5) / 8);
-        } else if (mode == 'rainbow') {
-          colorMode(HSB, 360, 100, 100);
-          stroke((index / path.length) * 360, 100, 100);
-        // } else if (mode == 'image') {
-        //   // Get the grayscale value of the current pixel
-        //   let pixelColor = imagePreview.get(pos1.x * cellSize, pos1.y * cellSize);
-        //   let grayValue = brightness(pixelColor);
-
-        //   // Map the grayscale value to a stroke color
-        //   let strokeColor = map(grayValue, 0, 255, 0, 360);
-
-        //   // Set the stroke color based on the grayscale value
-        //   stroke(strokeColor);
+          if (mode == 'blackAndWhite') {
+            stroke(255);
+          } else if (mode == 'grayScale') {
+            stroke(255 - ((i / path.length) * 360 * 5) / 8);
+          } else if (mode == 'rainbow') {
+            colorMode(HSB, 360, 100, 100);
+            stroke((i / path.length) * 360, 100, 100);
+          } else if (mode == 'image') {
+            if (imagePreview) {
+              let pixelX = Math.floor(map(pos1.x, 0, 2 ** order, 0, imagePreview.width));
+              let pixelY = Math.floor(map(pos1.y, 0, 2 ** order, 0, imagePreview.height));
+              let pixelColor = imagePreview.get(pixelX, pixelY);
+              let grayValue = brightness(pixelColor);
+              if (i == 0) {
+                grayValue = brightness(imagePreview.get(pixelX, pixelY));
+              }
+              stroke(grayValue);
+            }
+          }
+          strokeWeight(2);
+          line(
+            pos1.x * cellSize + (cellSize / 2),
+            pos1.y * cellSize + (cellSize / 2),
+            pos2.x * cellSize + (cellSize / 2),
+            pos2.y * cellSize + (cellSize / 2)
+          );
         }
-        strokeWeight(2);
-        line(
-          pos1.x * cellSize + cellSize / 2,
-          pos1.y * cellSize + cellSize / 2,
-          pos2.x * cellSize + cellSize / 2,
-          pos2.y * cellSize + cellSize / 2
-        );
       } else {
         running = false; // Stop the simulation
         startPauseButton.textContent = 'Simulation Ended';

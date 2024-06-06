@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hilbert Space Filling Curve</title>
+    <script src="javascript/p5.min.js"></script>
+    <script src="javascript/hilbertSFC.js"></script>
+    <link rel="stylesheet" href="styles/index.css" />
+    <link rel="stylesheet" href="styles/controls.css" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hilbert Space Filling Curve</title>
-  <script src="javascript/p5.min.js"></script>
-  <script src="javascript/hilbertSFC.js"></script>
-  <link rel="stylesheet" href="styles/index.css"/>
-  <link rel="stylesheet" href="styles/controls.css"/>
-</head>
+  <body>
+    <header>
+      <h1>Hilbert Space Filling Curve</h1>
+      <a href="/" class="home-button">Home</a>
+    </header>
 
-<body>
-  <header>
-    <h1>Hilbert Space Filling Curve</h1>
-    <a href="/" class="home-button">Home</a>
-  </header>
+    <br />
 
-  <br>
-
-  <main>
-    <div class="controls">
-      <div class="sliders">
-        <label for="orderSlider">Order Slider:</label>
-        <input type="range" id="orderSlider" min="1" max="8" value="4">
-        <br>
-        <label for="intervalSlider">Interval (ms):</label>
-        <input type="range" id="intervalSlider" min="0" max="500" value="100">
+    <main>
+      <div class="controls">
+        <div class="sliders">
+          <label for="orderSlider">Order Slider:</label>
+          <input type="range" id="orderSlider" min="1" max="8" value="4" />
+          <br />
+          <label for="intervalSlider">Interval (ms):</label>
+          <input type="range" id="intervalSlider" min="0" max="500" value="100" />
+          <br />
+          <label for="skipFramesSlider">Skip Frames:</label>
+          <input type="range" id="skipFramesSlider" min="1" max="1000" value="1" />
+        </div>
+        <label for="colourSelect">Colour Mode:</label>
+        <select id="colourSelect">
+          <option value="blackAndWhite">Black and White</option>
+          <option value="grayScale">Gray Scale</option>
+          <option value="rainbow">Rainbow</option>
+          <option value="image">Draw Image</option>
+        </select>
+        <input type="file" id="imageUpload" style="display: none" />
+        <div id="imagePreview" style="width: 256px; height: 256px; display: none"></div>
+        <div class="buttons">
+          <button id="startPauseButton">Start Simulation</button>
+          <button id="resetButton" disabled>Reset Simulation</button>
+        </div>
       </div>
-      <label for="colourSelect">Colour Mode:</label>
-      <select id="colourSelect">
-        <option value="blackAndWhite">Black and White</option>
-        <option value="grayScale"> Gray Scale</option>
-        <option value="rainbow">Rainbow</option>
-        <!-- <option value="image">Draw Image</option> -->
-      </select>
-      <div class="buttons">
-        <button id="startPauseButton">Start Simulation</button>
-        <button id="resetButton" disabled>Reset Simulation</button>
+      <div class="canvas-container">
+        <div id="canvas"></div>
       </div>
-    </div>
-    <div class="canvas-container">
-      <div id="canvas"></div>
-    </div>
-  </main>
-</body>
-
+    </main>
+  </body>
 </html>
