@@ -1,6 +1,7 @@
 let order = 4;
 let speed = 100;
 let mode = "blackAndWhite";
+let running = false; // Flag to indicate whether the simulation is running
 
 let cellSize;
 let path = [];
@@ -14,7 +15,7 @@ let LEFT = 3;
 
 let orderSlider;
 let intervalSlider;
-let modeSelect;
+let colourSelect;
 let startPauseButton;
 let resetButton;
 
@@ -25,12 +26,13 @@ function setup() {
 
   orderSlider = document.getElementById("orderSlider");
   intervalSlider = document.getElementById("intervalSlider");
-  modeSelect = document.getElementById("modeSelect");
+  colourSelect = document.getElementById("colourSelect");
   startPauseButton = document.getElementById("startPauseButton");
   resetButton = document.getElementById("resetButton");
 
   orderSlider.oninput = function() {
     order = parseInt(orderSlider.value);
+    cellSize = width / (2 ** order); // Recalculate the cellSize
     resetSimulation();
   }
 
@@ -38,13 +40,18 @@ function setup() {
     speed = parseInt(intervalSlider.value);
   }
 
-  modeSelect.onchange = function() {
-    mode = modeSelect.value;
+  colourSelect.onchange = function() {
+    mode = colourSelect.value;
+    if (mode == "random") {
+      hue = random(360);
+    }
   }
 
   startPauseButton.onclick = function() {
-    if (startPauseButton.textContent == "Start Simulation") {
+    running = !running; // Toggle the running flag
+    if (running) {
       startPauseButton.textContent = "Pause Simulation";
+      orderSlider.disabled = true;
       resetButton.disabled = false;
     } else {
       startPauseButton.textContent = "Start Simulation";
@@ -52,6 +59,11 @@ function setup() {
   }
 
   resetButton.onclick = function() {
+    running = false; // Stop the simulation
+    startPauseButton.textContent = "Start Simulation";
+    startPauseButton.disabled = false;
+    orderSlider.disabled = false;
+    resetButton.disabled = true;
     resetSimulation();
   }
 
@@ -60,31 +72,30 @@ function setup() {
 }
 
 function draw() {
-  let currentTime = millis();
-  if (currentTime - lastTime > speed) {
-    lastTime = currentTime;
-    if (index < path.length - 1) {
-      index++;
-      let pos1 = path[index - 1];
-      let pos2 = path[index];
+  if (running) { // Only run the simulation if the running flag is true
+    let currentTime = millis();
+    if (currentTime - lastTime > speed) {
+      lastTime = currentTime;
+      if (index < path.length - 1) {
+        index++;
+        let pos1 = path[index - 1];
+        let pos2 = path[index];
 
-      if (mode == "blackAndWhite") {
-        stroke(255);
+        if (mode == "blackAndWhite") {
+          stroke(255);
+        } else if (mode == "grayScale") {
+          stroke(255 - index / path.length * 360 * 5 / 8);
       } else if (mode == "rainbow") {
-        colorMode(HSB, 360, 100, 100);
-        stroke(index / path.length * 360, 100, 100);
-      } else if (mode == "random") {
-        if (index == 1) {
-          hue = random(360);
-        } else {
-          hue = (hue + random(-10, 10)) % 360;
+          colorMode(HSB, 360, 100, 100);
+          stroke(index / path.length * 360, 100, 100);
         }
-        colorMode(HSB, 360, 100, 100);
-        stroke(hue, 100, 100);
+        strokeWeight(2);
+        line(pos1.x * cellSize + cellSize / 2, pos1.y * cellSize + cellSize / 2, pos2.x * cellSize + cellSize / 2, pos2.y * cellSize + cellSize / 2);
+      } else {
+        running = false; // Stop the simulation
+        startPauseButton.textContent = "Simulation Ended";
+        startPauseButton.disabled = true;
       }
-
-      strokeWeight(2);
-      line(pos1.x * cellSize + cellSize / 2, pos1.y * cellSize + cellSize / 2, pos2.x * cellSize + cellSize / 2, pos2.y * cellSize + cellSize / 2);
     }
   }
 }
@@ -94,6 +105,8 @@ function resetSimulation() {
   path = [];
   index = 0;
   lastTime = 0;
+  orderSlider.disabled = false;
+
   hilbert(order);
 }
 

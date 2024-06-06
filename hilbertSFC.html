@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wave Function Collapse</title>
+  <title>Hilbert Space Filling Curve</title>
   <script src="javascript/p5.min.js"></script>
   <script src="javascript/hilbertSFC.js"></script>
   <link rel="stylesheet" href="styles/index.css"/>
-  <link rel="stylesheet" href="styles/wfc.css"/>
+  <link rel="stylesheet" href="styles/controls.css"/>
 </head>
 
 <body>
@@ -28,11 +28,11 @@
         <label for="intervalSlider">Interval (ms):</label>
         <input type="range" id="intervalSlider" min="0" max="500" value="100">
       </div>
-      <label for="modeSelect">Mode:</label>
-      <select id="modeSelect">
+      <label for="colourSelect">Colour Mode:</label>
+      <select id="colourSelect">
         <option value="blackAndWhite">Black and White</option>
         <option value="rainbow">Rainbow</option>
-        <option value="random">Random</option>
+        <option value="grayScale"> Gray Scale</option>
       </select>
       <div class="buttons">
         <button id="startPauseButton">Start Simulation</button>
