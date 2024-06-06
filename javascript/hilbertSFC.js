@@ -135,6 +135,7 @@ function resetSimulation() {
   index = 0;
   lastTime = 0;
   orderSlider.disabled = false;
+  colourSelect.disabled = false;
 
   hilbert(order);
 }
