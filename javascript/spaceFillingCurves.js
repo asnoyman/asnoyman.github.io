@@ -8,6 +8,8 @@ const LEFT = 3;
 let order = 4;
 let speed = 100;
 let mode = 'blackAndWhite';
+let curveMode = 'hilbert'; // 'hilbert' or 'peano'
+let curveBase = 2;
 let running = false;
 let skipFrames = 1;
 
@@ -21,7 +23,9 @@ let lastTime = 0;
 // DOM Elements
 let orderSlider;
 let intervalSlider;
+let skipFramesSlider;
 let colourSelect;
+let curveSelect;
 let startPauseButton;
 let resetButton;
 let imageUpload;
@@ -36,25 +40,26 @@ function setup() {
   // Initialize DOM Elements
   orderSlider = document.getElementById('orderSlider');
   intervalSlider = document.getElementById('intervalSlider');
+  skipFramesSlider = document.getElementById('skipFramesSlider');
   colourSelect = document.getElementById('colourSelect');
+  curveSelect = document.getElementById('curveSelect');
   startPauseButton = document.getElementById('startPauseButton');
   resetButton = document.getElementById('resetButton');
   imageUpload = document.getElementById('imageUpload');
   imagePreviewDiv = document.getElementById('imagePreview');
-  let skipFramesSlider = document.getElementById('skipFramesSlider');
 
   // Add Event Listeners
   orderSlider.addEventListener('input', handleOrderChange);
   intervalSlider.addEventListener('input', handleIntervalChange);
   skipFramesSlider.addEventListener('input', handleSkipFramesChange);
   colourSelect.addEventListener('change', handleColourChange);
+  curveSelect.addEventListener('change', handleCurveChange);
   imageUpload.addEventListener('change', handleImageUpload);
   startPauseButton.addEventListener('click', handleStartPause);
-  resetButton.addEventListener('click', handleReset);
+  resetButton.addEventListener('click', resetSimulation);
 
   // Initialize Canvas Variables
-  cellSizeX = width / 2 ** order;
-  cellSizeY = height / 2 ** order;
+  calculateCellSize();
   hilbert(order);
 }
 
@@ -79,8 +84,10 @@ function draw() {
 // Event Handlers
 function handleOrderChange() {
   order = parseInt(orderSlider.value);
-  cellSizeX = width / 2 ** order;
-  cellSizeY = height / 2 ** order;
+  if (curveMode === 'peano') {
+    order = Math.min(order, 6);
+  }
+  calculateCellSize();
   resetSimulation();
 }
 
@@ -97,8 +104,7 @@ function handleColourChange() {
   colorMode(RGB, 255, 255, 255);
   if (mode !== 'image') {
     resizeCanvas(600, 600);
-    cellSizeX = 600 / 2 ** order;
-    cellSizeY = 600 / 2 ** order;
+    calculateCellSize();
     imageUpload.value = null;
     imageUpload.style.display = 'none';
     imagePreview = null;
@@ -107,6 +113,16 @@ function handleColourChange() {
     imageUpload.style.display = 'block';
   }
   background(0);
+}
+
+function handleCurveChange() {
+  curveMode = curveSelect.value;
+  if (curveMode === 'hilbert') {
+    curveBase = 2;
+  } else if (curveMode === 'peano') {
+    curveBase = 3;
+  }
+  resetSimulation();
 }
 
 function handleImageUpload() {
@@ -122,8 +138,7 @@ function handleImageUpload() {
     let newWidth = Math.min(600, img.width);
     let newHeight = Math.min(600, newWidth / aspectRatio);
     resizeCanvas(newWidth, newHeight);
-    cellSizeX = newWidth / 2 ** order;
-    cellSizeY = newHeight / 2 ** order;
+    calculateCellSize();
     img.filter(GRAY);
     let previewWidth = newWidth / 2;
     let previewHeight = newHeight / 2;
@@ -151,19 +166,19 @@ function handleStartPause() {
     orderSlider.disabled = true;
     resetButton.disabled = false;
     colourSelect.disabled = true;
+    curveSelect.disabled = true;
     imageUpload.disabled = true;
   } else {
     startPauseButton.textContent = 'Start Simulation';
   }
 }
 
-function handleReset() {
-  resetSimulation();
-}
-
 // Reset Simulation Function
 function resetSimulation() {
   background(0);
+  if (curveMode === 'peano') {
+    order = Math.min(order, 6);
+  }
   path = [];
   index = 0;
   lastTime = 0;
@@ -173,8 +188,14 @@ function resetSimulation() {
   orderSlider.disabled = false;
   resetButton.disabled = true;
   colourSelect.disabled = false;
+  curveSelect.disabled = false;
   imageUpload.disabled = false;
-  hilbert(order);
+  calculateCellSize();
+  if (curveMode === 'hilbert') {
+    hilbert(order);
+  } else if (curveMode === 'peano') {
+    peano(order);
+  }
 }
 
 // Draw Lines Function
@@ -205,13 +226,19 @@ function getStrokeColor(i) {
     return color((i / path.length) * 360, 100, 100);
   } else if (mode === 'image') {
     if (imagePreview) {
-      let pixelX = Math.floor(map(path[i].x, 0, 2 ** order, 0, imagePreview.width));
-      let pixelY = Math.floor(map(path[i].y, 0, 2 ** order, 0, imagePreview.height));
+      let pixelX = Math.floor(map(path[i].x, 0, curveBase ** order, 0, imagePreview.width));
+      let pixelY = Math.floor(map(path[i].y, 0, curveBase ** order, 0, imagePreview.height));
       let pixelColor = imagePreview.get(pixelX, pixelY);
       let grayValue = brightness(pixelColor);
       return (grayValue * 255) / 100;
     }
   }
+}
+
+// Function to calculate cell size
+function calculateCellSize() {
+  cellSizeX = width / curveBase ** order;
+  cellSizeY = height / curveBase ** order;
 }
 
 // Hilbert Curve Function
@@ -240,6 +267,60 @@ function hilbert(order, x = 0, y = 0, direction = UP) {
       hilbert(order - 1, x, y + size, LEFT);
       hilbert(order - 1, x, y, LEFT);
       hilbert(order - 1, x + size, y, UP);
+    }
+  }
+}
+
+// Peano Curve Function
+function peano(order, x = 0, y = 0, direction = 1) {
+  if (order === 0) {
+    path.push(createVector(x, y));
+  } else {
+    const size = 3 ** (order - 1);
+    if (direction === 1) {
+      // top to bottom, not mirrored
+      peano(order - 1, x, y, 1);
+      peano(order - 1, x, y + size, 2);
+      peano(order - 1, x, y + 2 * size, 1);
+      peano(order - 1, x + size, y + 2 * size, 3);
+      peano(order - 1, x + size, y + size, 4);
+      peano(order - 1, x + size, y, 3);
+      peano(order - 1, x + 2 * size, y, 1);
+      peano(order - 1, x + 2 * size, y + size, 2);
+      peano(order - 1, x + 2 * size, y + 2 * size, 1);
+    } else if (direction === 2) {
+      // top to bottom, mirrored
+      peano(order - 1, x + 2 * size, y, 2);
+      peano(order - 1, x + 2 * size, y + size, 1);
+      peano(order - 1, x + 2 * size, y + 2 * size, 2);
+      peano(order - 1, x + size, y + 2 * size, 4);
+      peano(order - 1, x + size, y + size, 3);
+      peano(order - 1, x + size, y, 4);
+      peano(order - 1, x, y, 2);
+      peano(order - 1, x, y + size, 1);
+      peano(order - 1, x, y + 2 * size, 2);
+    } else if (direction === 3) {
+      // bottom to top, not mirrored
+      peano(order - 1, x, y + 2 * size, 3);
+      peano(order - 1, x, y + size, 4);
+      peano(order - 1, x, y, 3);
+      peano(order - 1, x + size, y, 1);
+      peano(order - 1, x + size, y + size, 2);
+      peano(order - 1, x + size, y + 2 * size, 1);
+      peano(order - 1, x + 2 * size, y + 2 * size, 3);
+      peano(order - 1, x + 2 * size, y + size, 4);
+      peano(order - 1, x + 2 * size, y, 3);
+    } else if (direction === 4) {
+      // bottom to top, mirrored
+      peano(order - 1, x + 2 * size, y + 2 * size, 4);
+      peano(order - 1, x + 2 * size, y + size, 3);
+      peano(order - 1, x + 2 * size, y, 4);
+      peano(order - 1, x + size, y, 2);
+      peano(order - 1, x + size, y + size, 1);
+      peano(order - 1, x + size, y + 2 * size, 2);
+      peano(order - 1, x, y + 2 * size, 4);
+      peano(order - 1, x, y + size, 3);
+      peano(order - 1, x, y, 4);
     }
   }
 }
