@@ -1,111 +1,135 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coding Exploration</title>
-    <link rel="stylesheet" href="styles/index.css"/>
-</head>
-<body>
+    <link rel="stylesheet" href="styles/index.css" />
+  </head>
+  <body>
     <header>
-        <h1>Welcome to Adam Snoyman's Coding Exploration Page</h1>
-        <a href="/" class="home-button">Home</a>
+      <h1>Welcome to Adam Snoyman's Coding Exploration Page</h1>
+      <a href="/" class="home-button">Home</a>
     </header>
 
     <main>
-        <section>
-            <h2>Wave Function Collapse:</h2>
-            <p>
-                Wave function collapse is a probablistic algorithm that takes a tile set (or inspirational image in other implementations)
-                and combines them such that a randomly generated image is created from the tiles while no tiles are mismatched. This algorithm's
-                speed comes at the expense of complete correctness, meaning that occasionally the program will realise it has created a state
-                that leaves a cell unable to be filled, which will cause it to start over. This is more common when you use small tile sets,
-                a large grid or a combination of both.
-                <br><br>
-                To interact with the simulation, you can use the sliders to adjust the size of the grid and the speed each tile is placed.
-                Use the radios to switch between tile sets to see different creations. Check the highlight base tiles box to see the cell
-                in the preview that was placed on that turn.
-            </p>
-            <ul>
-                <li><a href="WFC">Wave Function Collapse</a></li>
-            </ul>
-        </section>
+      <section>
+        <h2>Space Filling Curves:</h2>
+        <p>
+          A space-filling curve is a mathematical concept that maps a one-dimensional line to a
+          two-dimensional space in a continuous manner. One of the most well-known space-filling
+          curves is the Hilbert curve, which was first described by the German mathematician David
+          Hilbert in 1891. In the simulation, you will see the Hilbert space-filling curve being 
+          drawn on different colour schemes. You will also be able to see the power of these curves
+          by watching it draw your own images (in grayscale) as a single continuous line.
+        </p>
+        <p>
+          To use the Hilbert Space Filling Curve simulation, simply select the order of the curve
+          you want to generate, and the simulation will start drawing the curve. You can adjust the
+          speed of the simulation using the interval slider. You can also change the color scheme of
+          the curve using the color select dropdown. If you select the "image" mode, you can upload
+          an image to use as a background for the curve.
+        </p>
+        <ul>
+          <li><a href="hilbertSFC">Hilbert Space Filling Curve</a></li>
+        </ul>
+      </section>
 
-        <section>
-            <h2>Boids Simulation:</h2>
-            <p>
-                Boids is an artificial life simulation, originally developed by Craig Reynolds in 1986.
-                It simulates the flocking behavior of birds. In this simulation, each "boid" follows a set of rules:
-                separation, alignment, and cohesion. Separation means that each boid tries to avoid its neighbors.
-                Alignment means that each boid tries to match its velocity with its neighbors. Cohesion means that each
-                boid tries to move towards the center of the group.
-                <br><br>
-                To interact with the simulation, you can use the sliders to adjust the size of the boids, the maximum
-                force they can apply, the maximum speed they can reach, the desired separation between them, and the
-                distance at which they consider other boids to be neighbors. You can also click on the screen to add
-                new boids. The "Remove Some Boids" button will remove 10% of the current boids. The "Show Clouds"
-                checkbox will toggle the display of clouds in the background.
-            </p>
-            <ul>
-                <li><a href="boids">Boids Simulation</a></li>
-            </ul>
-        </section>
+      <section>
+        <h2>Wave Function Collapse:</h2>
+        <p>
+          Wave function collapse is a probablistic algorithm that takes a tile set (or inspirational
+          image in other implementations) and combines them such that a randomly generated image is
+          created from the tiles while no tiles are mismatched. This algorithm's speed comes at the
+          expense of complete correctness, meaning that occasionally the program will realise it has
+          created a state that leaves a cell unable to be filled, which will cause it to start over.
+          This is more common when you use small tile sets, a large grid or a combination of both.
+          <br /><br />
+          To interact with the simulation, you can use the sliders to adjust the size of the grid
+          and the speed each tile is placed. Use the radios to switch between tile sets to see
+          different creations. Check the highlight base tiles box to see the cell in the preview
+          that was placed on that turn.
+        </p>
+        <ul>
+          <li><a href="WFC">Wave Function Collapse</a></li>
+        </ul>
+      </section>
 
-        <section>
-            <h2>Space Shooting Game</h2>
-            <p>
-                The goal of Untitled Space Game is to survive as long as you can while destroying
-                meteors and alien ships for bonus points. This is an arcade / roguelike style game, where each
-                run has no impact on the previous one.
-                <br><br>
-                To control the ship, use the left and right arrow keys to rotate. Press space bar to shoot your 
-                laser beam.
-            </p>
-            <ul>
-                <li><a href="spaceGame">Space Shooting Game</a></li>
-            </ul>
-        </section>
+      <section>
+        <h2>Boids Simulation:</h2>
+        <p>
+          Boids is an artificial life simulation, originally developed by Craig Reynolds in 1986. It
+          simulates the flocking behavior of birds. In this simulation, each "boid" follows a set of
+          rules: separation, alignment, and cohesion. Separation means that each boid tries to avoid
+          its neighbors. Alignment means that each boid tries to match its velocity with its
+          neighbors. Cohesion means that each boid tries to move towards the center of the group.
+          <br /><br />
+          To interact with the simulation, you can use the sliders to adjust the size of the boids,
+          the maximum force they can apply, the maximum speed they can reach, the desired separation
+          between them, and the distance at which they consider other boids to be neighbors. You can
+          also click on the screen to add new boids. The "Remove Some Boids" button will remove 10%
+          of the current boids. The "Show Clouds" checkbox will toggle the display of clouds in the
+          background.
+        </p>
+        <ul>
+          <li><a href="boids">Boids Simulation</a></li>
+        </ul>
+      </section>
 
-        <section>
-            <h2>Towers of Hanoi:</h2>
-            <p>
-                The goal of the towers of hanoi is to move the stack of rings starting on peg 1
-                and move them to peg 3. However, only the top ring of a stack can be moved, and
-                no ring may ever be placed on top of a smaller ring.
-                <br><br>
-                If you would like to see how you can solve this puzzle optimally, watch the solver
-                do it for you.
-            </p>
-            <ul>
-                <li><a href="pygame/ToHClick">Towers of Hanoi - Click</a></li>
-                <li><a href="pygame/ToHDrag">Towers of Hanoi - Drag</a></li>
-                <li><a href="pygame/ToHSolver">Towers of Hanoi - Solver</a></li>
-            </ul>
-        </section>
+      <section>
+        <h2>Space Shooting Game</h2>
+        <p>
+          The goal of Untitled Space Game is to survive as long as you can while destroying meteors
+          and alien ships for bonus points. This is an arcade / roguelike style game, where each run
+          has no impact on the previous one.
+          <br /><br />
+          To control the ship, use the left and right arrow keys to rotate. Press space bar to shoot
+          your laser beam.
+        </p>
+        <ul>
+          <li><a href="spaceGame">Space Shooting Game</a></li>
+        </ul>
+      </section>
 
-        <section>
-            <h2>Light Up (aka Caves / Akari):</h2>
-            <p>
-                The goal of a Light Up puzzle is to light up every cell in the grid, aside 
-                from the walls. This can be done by placing lights in the grid, but no light
-                is allowed to light up any other light. Walls stop light from passing through
-                them. Some walls also have an allotted number of lights that 
-                <strong>must</strong> be orthogonally adjacent to that wall.
-                <br><br>
-                By entering a number on the opening screen, you will be taken to a grid of that
-                size. Here you can build your own puzzle. You can modify cells by simply pressing 
-                buttons to edit the cell your mouse is over. "Space" will add a wall, and the numbers
-                0 - 4 will add a wall with that clue. "Delete" will make the cell blank. Left clicking
-                the mouse will increment the value of the clue, or go from 4 to empty.
-                <br><br>
-                When the puzzle is ready, click "Enter" to start solving. If you selected a random
-                puzzle, you will be taken directly to the solving state. To submit a solution, 
-                press the enter key. If the solution is correct, it will be made clear.
-            </p>
-            <ul>
-                <li><a href="pygame/LightUpPlay">Light Up - Play</a></li>
-                <li><a href="pygame/LightUpSolver">Light Up - Solver</a></li>
-            </ul>
-        </section>
+      <section>
+        <h2>Towers of Hanoi:</h2>
+        <p>
+          The goal of the towers of hanoi is to move the stack of rings starting on peg 1 and move
+          them to peg 3. However, only the top ring of a stack can be moved, and no ring may ever be
+          placed on top of a smaller ring.
+          <br /><br />
+          If you would like to see how you can solve this puzzle optimally, watch the solver do it
+          for you.
+        </p>
+        <ul>
+          <li><a href="pygame/ToHClick">Towers of Hanoi - Click</a></li>
+          <li><a href="pygame/ToHDrag">Towers of Hanoi - Drag</a></li>
+          <li><a href="pygame/ToHSolver">Towers of Hanoi - Solver</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Light Up (aka Caves / Akari):</h2>
+        <p>
+          The goal of a Light Up puzzle is to light up every cell in the grid, aside from the walls.
+          This can be done by placing lights in the grid, but no light is allowed to light up any
+          other light. Walls stop light from passing through them. Some walls also have an allotted
+          number of lights that
+          <strong>must</strong> be orthogonally adjacent to that wall. <br /><br />
+          By entering a number on the opening screen, you will be taken to a grid of that size. Here
+          you can build your own puzzle. You can modify cells by simply pressing buttons to edit the
+          cell your mouse is over. "Space" will add a wall, and the numbers 0 - 4 will add a wall
+          with that clue. "Delete" will make the cell blank. Left clicking the mouse will increment
+          the value of the clue, or go from 4 to empty.
+          <br /><br />
+          When the puzzle is ready, click "Enter" to start solving. If you selected a random puzzle,
+          you will be taken directly to the solving state. To submit a solution, press the enter
+          key. If the solution is correct, it will be made clear.
+        </p>
+        <ul>
+          <li><a href="pygame/LightUpPlay">Light Up - Play</a></li>
+          <li><a href="pygame/LightUpSolver">Light Up - Solver</a></li>
+        </ul>
+      </section>
     </main>
-</body>
+  </body>
 </html>

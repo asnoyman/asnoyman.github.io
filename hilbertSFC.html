@@ -8,6 +8,7 @@
     <script src="javascript/hilbertSFC.js"></script>
     <link rel="stylesheet" href="styles/index.css" />
     <link rel="stylesheet" href="styles/controls.css" />
+    <link rel="stylesheet" href="styles/sfc.css" />
   </head>
 
   <body>
@@ -25,10 +26,10 @@
           <input type="range" id="orderSlider" min="1" max="8" value="4" />
           <br />
           <label for="intervalSlider">Interval (ms):</label>
-          <input type="range" id="intervalSlider" min="0" max="500" value="100" />
+          <input type="range" id="intervalSlider" min="0" max="500" value="50" />
           <br />
           <label for="skipFramesSlider">Skip Frames:</label>
-          <input type="range" id="skipFramesSlider" min="1" max="1000" value="1" />
+          <input type="range" id="skipFramesSlider" min="1" max="200" value="1" />
         </div>
         <label for="colourSelect">Colour Mode:</label>
         <select id="colourSelect">
@@ -37,7 +38,7 @@
           <option value="rainbow">Rainbow</option>
           <option value="image">Draw Image</option>
         </select>
-        <input type="file" id="imageUpload" style="display: none" />
+        <input type="file" id="imageUpload"  accept="image/*" style="display: none" />
         <div id="imagePreview" style="width: 256px; height: 256px; display: none"></div>
         <div class="buttons">
           <button id="startPauseButton">Start Simulation</button>

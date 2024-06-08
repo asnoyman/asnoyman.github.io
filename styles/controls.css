@@ -124,3 +124,41 @@ select option {
 select option:hover {
   background: #ddd;
 }
+
+input[type='file'] {
+  margin: 10px;
+  padding: 10px;
+  width: 280px;
+  border: none;
+  border-radius: 5px;
+  background: #ccc;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type='file']::file-selector-button {
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #3498db;
+  color: #fff;
+  cursor: pointer;
+}
+
+input[type='file']::file-selector-button:hover {
+  background: #2980b9;
+}
+
+input[type='file']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input[type='file']:disabled::file-selector-button{
+  cursor: not-allowed;
+}
+
+input[type='file']:disabled::file-selector-button:hover {
+  background: #3498db;
+}
