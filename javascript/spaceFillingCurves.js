@@ -3,6 +3,7 @@ const UP = 0;
 const RIGHT = 1;
 const DOWN = 2;
 const LEFT = 3;
+const SKIP_FRAME_OPTIONS = [1, 2, 5, 10, 50, 100, 500, 1000, 10000];
 
 // Simulation Variables
 let order = 4;
@@ -96,7 +97,7 @@ function handleIntervalChange() {
 }
 
 function handleSkipFramesChange() {
-  skipFrames = parseInt(skipFramesSlider.value);
+  skipFrames = SKIP_FRAME_OPTIONS[parseInt(skipFramesSlider.value)];
 }
 
 function handleColourChange() {
