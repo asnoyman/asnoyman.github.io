@@ -1,0 +1,103 @@
+main {
+  flex-direction: row;
+  display: flex;
+}
+
+.description {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.canvas-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+/* Controls styling similar to WFC page */
+#controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 300px;
+}
+
+#controls > * {
+  margin: 10px;
+}
+
+/* Button styles - matching the site's style */
+.control-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.start-button {
+  background-color: #25c85e;
+}
+
+.start-button:hover {
+  background-color: #2aaf2e;
+}
+
+.stop-button {
+  background-color: #e74c3c;
+}
+
+.stop-button:hover {
+  background-color: #c0392b;
+}
+
+.reset-button {
+  background-color: #3498db;
+}
+
+.reset-button:hover {
+  background-color: #2980b9;
+}
+
+/* Control row styling */
+.control-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.control-label {
+  display: inline-block;
+  margin-right: 10px;
+  color: #333;
+}
+
+.control-slider {
+  flex-grow: 1;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Style for slider values */
+#triangle-size-value,
+#point-size-value,
+#speed-value {
+  color: #3498db;
+  font-weight: bold;
+  min-width: 30px;
+  text-align: right;
+}
